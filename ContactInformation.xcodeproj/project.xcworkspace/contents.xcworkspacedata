@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../ContactInformation/ContactInfo.m">
+   </FileRef>
+   <FileRef
       location = "self:ContactInformation.xcodeproj">
    </FileRef>
 </Workspace>
