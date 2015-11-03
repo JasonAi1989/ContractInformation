@@ -480,12 +480,10 @@
     if (searchText.length == 0 && _isSearching == true) {
         _isSearching = false;
         [_tableView reloadData];
-        
-        NSLog(@"return");
+ 
         return;
     }
     
-    NSLog(@"%@",searchText);
     [self searchKeyWord:searchText];
 }
 

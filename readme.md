@@ -128,13 +128,16 @@ typedef NS_ENUM(NSInteger, UITableViewCellStyle) {
 
 表创建过程图：
 
-![create table]()
+![create table](http://7xj4cp.com1.z0.glb.clouddn.com/create_table.jpg)
 
 cell删除、添加和移动的过程图：
 
-![modify the cell]()
+![modify the cell](http://7xj4cp.com1.z0.glb.clouddn.com/modify_cell.jpg)
 
 
 ### 项目效果图
 
-![result]()
+<video id="video" controls="" preload="auto" loop="loop" height="460" width="750">
+      <source id="mp4" src="http://7xj4cp.com1.z0.glb.clouddn.com/ContactInfo.mp4" type="video/mp4">
+      <p>Your user agent does not support the HTML5 Video element.</p>
+</video>
