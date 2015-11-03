@@ -46,3 +46,95 @@ typedef NS_ENUM(NSInteger, UITableViewCellStyle) {
 + 此方法调用很频繁，无论是初始化、上下滚动、刷新都会调用此方法，所以在这里执行的操作一定要注意性能；
 
 + 可重用标识可以有多个，如果在UITableView中有多类结构不同的Cell，可以通过这个标识进行缓存和重新；
+
+#### UITableViewCell的修改
+
+这里所说的修改包括删除cell，添加cell以及移动cell，如果想修改cell中的详细信息，可以通过弹出交互界面的方式（如一个新的UIView页面或者UIAlertView页面等）进行修改。
+
+需要被调用的方法：
+
+```
+//开启或者关闭编辑模式，第二个参数是切换模式时是否有动画效果
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
+```
+
+代理中需要实现的方法：
+
+```
+//返回一个编辑模式的风格，可以是删除风格的编辑模式，也可以是添加风格的编辑模式，默认不实现此方法为删除风格的编辑模式
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath;
+```
+
+数据源中需要实现的方法：
+
+```
+//具体去实现添加或者删除的功能，注意，要想修改UI，先修改数据模型
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
+
+// 实现拖动cell的功能，这里主要通过第二和第三个参数对数据模型进行修改，不需要再调用刷新方法。
+// 不管是添加还是删除风格的编辑模式，只要实现了此函数，均可以实现拖动功能
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+```
+
+下面是关于刷新cell的方法。注意，下列方法的第一个参数是NSIndexPath类型的数组，也就是说，一次可以刷新多个位置的cell。
+
+```
+//添加时刷新指定的行，注意，在数据模型中新添加的数据应该在对应的indexPath位置，这样使用此方法才能将新添加的数据刷新到UI中
+- (void)insertRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+
+//删除时刷新指定的行，同样，先修改数据模型，然后调用此方法
+- (void)deleteRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+
+//当修改完某个cell的详细信息后可以使用此方法只刷新单个cell
+- (void)reloadRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:
+
+//刷新这个表，这样做性能会较差，如果是需要删除表中某个组时可以使用此方法
+- (void)reloadData;
+```
+
+关于NSIndexPath类型，在UITableView部分需要记住的有两个关键值：
+
+```
+@interface NSIndexPath (UITableView)
+
++ (NSIndexPath *)indexPathForRow:(NSInteger)row inSection:(NSInteger)section;
+
+@property(nonatomic,readonly) NSInteger section; // 代表表中的组号
+@property(nonatomic,readonly) NSInteger row;   // 代表组中的行号
+
+@end
+```
+这两个属性都是只读类型，需要通过构造函数对其进行赋值。
+
+#### UITableView + UIViewController <= UITableViewController
+
+如果一个页面中只有一个UITableView控件的话，可以直接使用UITableViewController。这个控制器 UITableViewController实现了UITableView数据源和代理协议，内部定义了一个tableView属性供外部访问，同时自动铺满整个屏幕、自动伸缩以方便我们的开发。当然UITableViewController也并不是简单的帮我们定义完UITableView并且设置了数据源、代理而已，它还有其他强大的功能，例如刷新控件、滚动过程中固定分组标题等。
+
+### 总结
++ UITableVIew拥有两种风格，默认和带组的；
++ 数据源中有必需实现的两个方法，分别用于计算表的行数和生成cell；
++ 设置行高、行首高和注脚高需要再代理中实现；
++ 与点击行相关的操作也要在代理中实现；
++ 设置组数量、行首和注脚标题、右侧字母索引、添加、删除和移动cell的实际动作都可以在数据源中实现；
++ 尽量使用cell重用机制；
++ 尽量使用单个cell的刷新来代替整个表的刷新；
++ 如果页面中只有UITableVIew一个控件，尽量使用UITableViewController；
++ 如果要使用searchBar，最好配合UISearchController控件进行使用；
++ 当实现搜索功能时，将字符全部转换成大写（或者小写）可以实现忽略大小写的过滤；
++ NSIndexPath中的section代表表中组id，row代表组中行id；
++ cell 中包涵一个UIView控件，两个UILable控件，一个UIImage控件；
++ 可通过设置cell中的accessoryView或者accessoryType来自定义或选择cell的访问器；
++ 可以通过给cell中的UIView控件添加子控件的方式来自定义一个cell的样式；
+
+表创建过程图：
+
+![create table]()
+
+cell删除、添加和移动的过程图：
+
+![modify the cell]()
+
+
+### 项目效果图
+
+![result]()
